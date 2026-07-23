@@ -3141,3 +3141,34 @@ func TestGeneratePathwaysManifest_CommandWithQuotes(t *testing.T) {
 		t.Errorf("manifest does not contain expected command exactly.\nExpected to find: %q\nManifest: %s", expectedCommand, manifest)
 	}
 }
+
+func TestConfigureKubectl_DNSEndpoint(t *testing.T) {
+	t.Run("without DNS endpoint", func(t *testing.T) {
+		mockExec := NewMockExecutor(map[string][]shell.CommandResult{
+			"gcloud container clusters get-credentials test-cluster --location us-central1-a --project test-project": {{ExitCode: 0, Stdout: ""}},
+		})
+		orc := newTestGKEOrchestrator(mockExec)
+		err := orc.configureKubectl("test-cluster", "us-central1-a", "test-project")
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+	})
+
+	t.Run("with DNS endpoint", func(t *testing.T) {
+		mockExec := NewMockExecutor(map[string][]shell.CommandResult{
+			"gcloud container clusters get-credentials test-cluster --location us-central1-a --project test-project --dns-endpoint": {{ExitCode: 0, Stdout: ""}},
+		})
+		orc := newTestGKEOrchestrator(mockExec)
+		orc.clusterDesc = gkeCluster{
+			ControlPlaneEndpointsConfig: &ControlPlaneEndpointsConfig{
+				DnsEndpointConfig: &DnsEndpointConfig{
+					AllowExternalTraffic: true,
+				},
+			},
+		}
+		err := orc.configureKubectl("test-cluster", "us-central1-a", "test-project")
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+	})
+}

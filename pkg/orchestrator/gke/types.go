@@ -279,14 +279,14 @@ type gkeCluster struct {
 	Locations                   []string                     `json:"locations"`
 	NodePools                   []gkeJobNodePool             `json:"nodePools"`
 	Autoscaling                 gkeClusterAutoscaling        `json:"autoscaling"`
-	ControlPlaneEndpointsConfig *controlPlaneEndpointsConfig `json:"controlPlaneEndpointsConfig,omitempty"`
+	ControlPlaneEndpointsConfig *ControlPlaneEndpointsConfig `json:"controlPlaneEndpointsConfig,omitempty"`
 }
 
-type controlPlaneEndpointsConfig struct {
-	DnsEndpointConfig *dnsEndpointConfig `json:"dnsEndpointConfig,omitempty"`
+type ControlPlaneEndpointsConfig struct {
+	DnsEndpointConfig *DnsEndpointConfig `json:"dnsEndpointConfig,omitempty"`
 }
 
-type dnsEndpointConfig struct {
+type DnsEndpointConfig struct {
 	AllowExternalTraffic bool `json:"allowExternalTraffic,omitempty"`
 }
 
